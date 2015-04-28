@@ -1,0 +1,11 @@
+"AddonInfo"
+{
+	"name"				"Resource Browser"
+	"version"			"2.0.0"
+	"up_date"			"June 9th, 2008"
+	"author_name"			"Joudoki"
+	"author_email"			"joudoki@gmail.com"
+	"author_url"			"www.joudoki.com"
+	"info"				"Allows you to look through all the files that are loaded by Garry's Mod, play sounds, and view text files."
+	"override"			"0"
+}
