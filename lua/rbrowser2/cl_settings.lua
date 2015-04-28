@@ -115,14 +115,12 @@ function fileBrowser.Settings.AddOption( settings, type, label, optionName, defa
 			newSetting:SetValue( defaultValue );
 			newSetting:SizeToContents();
 			newSetting.OnChange = function( b ) 
-				if ( fileBrowser.Settings.Data[ optionName ] ) then
-					newSetting:SetValue( fileBrowser.Settings.GetSetting( optionName ) );
-				else
+				if not ( fileBrowser.Settings.Data[ optionName ] ) then
 					fileBrowser.Settings.Data[ optionName ] = b;
 				end
 			end
 			settings:AddItem( newSetting );
-			fileBrowser.Settings.SetSetting( optionName, defaultValue );
+		fileBrowser.Settings.SetSetting( optionName, defaultValue );
 	else
 		
 	end

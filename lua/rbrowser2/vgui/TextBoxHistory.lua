@@ -1,9 +1,9 @@
 -- Based on the DMultiChoice control
 PANEL = {};
 
-PANEL.MaxHistory = 10;
-
 function PANEL:Init()
+
+	self.MaxHistory = 10;
 
 	self.DropButton = vgui.Create( "DButton", self );
 	--self.DropButton:SetType( "down" );

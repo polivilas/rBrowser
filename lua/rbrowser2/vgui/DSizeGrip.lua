@@ -1,17 +1,18 @@
 PANEL = {};
 
-PANEL.Sizing = false;
-PANEL.SizeHoldPos = { x=0, y=0 };
-PANEL.SizeHoldSize = { w=0, h=0 };
-PANEL.Enabled = true;
+function PANEL:Init()
+	self.Sizing = false;
+	self.Enabled = true;
 
-PANEL.MinSize = { w=40, h=30 };
-PANEL.MaxSize = { w=ScrW(), h=ScrH() };
+	self.StayOnScreen = false;
+	self.ObeySizeRules = true;
 
-PANEL.StayOnScreen = false;
-PANEL.ObeySizeRules = true;
-
-PANEL.GripColor = Color( 255,255,255,255 );
+	self.GripColor = Color( 255,255,255,255 );
+	self.SizeHoldPos = { x=0, y=0 };
+	self.SizeHoldSize = { w=0, h=0 };
+	self.MinSize = { w=40, h=30 };
+	self.MaxSize = { w=ScrW(), h=ScrH() };
+end
 
 function PANEL:OnMousePressed( mc )
 	if ( mc == MOUSE_LEFT and self.Enabled == true ) then

@@ -14,8 +14,52 @@ PANEL.Sizeable = true;
 PANEL.StayOnScreen = true;
 
 function PANEL:Init()
-	self.btnDrag = vgui.Create( "DSizeGrip", self );
-	self.btnDrag:SetSize( 16,16 );
+	self.btnDrag = vgui.Create( "DSizeGrip", self )
+	self.btnDrag:SetSize( 16,16 )
+	
+	self.lblTitle:Remove()
+	
+	self.close = vgui.Create("DButton", self)
+	self.close:SetText("")
+	self.close.DoClick = function()
+		self:Close()
+		gui.EnableScreenClicker(false)
+	end
+	self:ShowCloseButton(false)
+	self.close.Paint = function(close, w, h)
+		if close.Hovered then
+			draw.RoundedBox(0, 0, 0, w, h, Color( 200, 200, 200, 255 ))
+		else
+			draw.RoundedBox(0, 0, 0, w, h, Color( 150, 150, 150, 255 ))
+		end
+		draw.SimpleText(
+			"Close",
+			"DermaDefault",
+			close:GetWide() / 2,
+			1,
+			color_white,
+			TEXT_ALIGN_CENTER,
+			TEXT_ALIGN_BOTTOM
+		)
+	end
+end
+
+function PANEL:SetTitle(text)
+	self.Title = text
+end
+
+function PANEL:Paint(w, h)
+	draw.RoundedBox(0, 0, 0, w, h, Color( 111, 111, 111, 255 ))
+	draw.RoundedBox(0, 0, 0, w, 28, Color( 225, 225, 225, 255 ))
+	draw.SimpleText(
+		self.Title,
+		"DermaDefault",
+		10,
+		7,
+		color_black,
+		TEXT_ALIGN_LEFT,
+		TEXT_ALIGN_BOTTOM
+	)
 end
 
 function PANEL:Think()
@@ -76,10 +120,14 @@ function PANEL:GetDraggable( )
 end
 
 function PANEL:PerformLayout()
+	self:ShowCloseButton(false)
 	derma.SkinHook( "Layout", "Frame", self );
 	
 	self.btnDrag:SetSize( 16, 16 );
 	self.btnDrag:SetPos( self:GetWide() - 16, self:GetTall() - 16 );
+	
+	self.close:SetSize(48,16)
+	self.close:SetPos(self:GetWide()-self.close:GetWide()-10,6)
 	
 	self.CustomLayout( self );
 end
