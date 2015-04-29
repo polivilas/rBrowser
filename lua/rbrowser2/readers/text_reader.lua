@@ -55,21 +55,51 @@ function textReader.Create( fData )
 			reader.fileView:SetLineNumbers( b );		
 		end
 	local copyData = vgui.Create( "DButton", reader );
-		copyData:SetText( "Copy to Data" );
-		copyData:SizeToContents();
-		copyData:SetSize( copyData:GetWide() + 4, 20 );
+		copyData:SetText( "" );
+		copyData:SetSize( 70, 20 );
 		copyData.DoClick = function() 
 				path = fData.path .. fData.name .. "." .. fData.ext;
 				print( "Data: [" .. path .. "]" );
 				file.Write( fData.name .. "." .. fData.ext .. ".txt", file.Read( path ) );
 		end
+		copyData.Paint = function(self, w, h)
+			if self.Hovered then
+				draw.RoundedBox(0, 0, 0, w, h, Color( 200, 200, 200, 255 ))
+			else
+				draw.RoundedBox(0, 0, 0, w, h, Color( 150, 150, 150, 255 ))
+			end
+			draw.SimpleText(
+				"Copy to Data",
+				"DermaDefault",
+				self:GetWide() / 2,
+				3,
+				color_white,
+				TEXT_ALIGN_CENTER,
+				TEXT_ALIGN_BOTTOM
+			)
+		end
 	local openSettings = vgui.Create( "DButton", reader );
-		openSettings:SetText( "Open Settings" );
-		openSettings:SizeToContents();
-		openSettings:SetSize( openSettings:GetWide() + 4, 20 );
+		openSettings:SetText( "" );
+		openSettings:SetSize( 70, 20 );
 		openSettings.DoClick = function()
 			fileBrowser.Settings.window:MakePopup( );
 			fileBrowser.Settings.window:SetVisible( true );
+		end
+		openSettings.Paint = function(self, w, h)
+			if self.Hovered then
+				draw.RoundedBox(0, 0, 0, w, h, Color( 200, 200, 200, 255 ))
+			else
+				draw.RoundedBox(0, 0, 0, w, h, Color( 150, 150, 150, 255 ))
+			end
+			draw.SimpleText(
+				"Open Settings",
+				"DermaDefault",
+				self:GetWide() / 2,
+				3,
+				color_white,
+				TEXT_ALIGN_CENTER,
+				TEXT_ALIGN_BOTTOM
+			)
 		end
 		
 	fileActions:AddItem( wordWrap );

@@ -1,34 +1,34 @@
 PANEL = {};
 
-PANEL.LineHeight = 13;
-PANEL.LineSpacing = 3;
+function PANEL:Init()
+	self.LineHeight = 13;
+	self.LineSpacing = 3;
 
-PANEL.View = {};
-PANEL.View.Line = 1;
-PANEL.View.Column = 0;
+	self.View = {};
+	self.View.Line = 1;
+	self.View.Column = 0;
 
-PANEL.Viewable = {};
-PANEL.Viewable.Lines = 32;
-PANEL.Viewable.Columns = 400;
+	self.Viewable = {};
+	self.Viewable.Lines = 32;
+	self.Viewable.Columns = 400;
 
-PANEL.Total = {};
-PANEL.Total.Lines = 40;
-PANEL.Total.Columns = 1000;
+	self.Total = {};
+	self.Total.Lines = 40;
+	self.Total.Columns = 1000;
 
-PANEL.Font = "Default";
-PANEL.TextColor = Color( 255,255,255,255 );
-PANEL.HighlightColor = Color( 0,128,255,255 );
-PANEL.CursorColor = Color( 255,255,0,255 );
+	self.Font = "Default";
+	self.TextColor = Color( 255,255,255,255 );
+	self.HighlightColor = Color( 0,128,255,255 );
+	self.CursorColor = Color( 255,255,0,255 );
 
-PANEL.WordWrap = true;
+	self.WordWrap = true;
 
-PANEL.LineData = {};
+	self.LineData = {};
+end
 
-function PANEL:Paint()
-	--derma.SkinHook( "Paint", "TextEntry", self );
-	
-	--surface.SetDrawColor( 255,0,0,5 );
-	--surface.DrawRect( 0,0,self:GetWide(),self:GetTall() );
+function PANEL:Paint(w, h)
+	surface.SetDrawColor( 255, 255, 255, 80 );
+	surface.DrawRect( 0, 0, w, h );
 	
 
 	local k = 1;

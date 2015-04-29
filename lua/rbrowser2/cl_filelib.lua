@@ -8,7 +8,10 @@ fileBrowser.fileLibrary = {};
 
 function fileBrowser.fileLibrary.getList( folder, filter )
 	print(folder,filter)
-	local files = file.Find( folder .. filter,"DATA" );
+	local files, folders = file.Find( folder .. filter,"DATA" );
+	if not files then
+		return {}
+	end
 	table.sort( files );
 	local fileData = {};
 	for k,v in pairs( files ) do
@@ -48,7 +51,10 @@ function fileBrowser.fileLibrary.Search( folder, filter, subFolders, iteration )
 	
 	-- Find folders
 	if ( subFolders == true ) then
-		local files,folders = file.Find( folder .. "*","DATA" );
+		local files, folders = file.Find( folder .. "*","DATA" );
+		if not folders then
+			return {}
+		end
 		for k,v in pairs( folders ) do
 			local searchFolder = folder .. v .. "/";
 			local result = fileBrowser.fileLibrary.Search( searchFolder, filter, true, iter + 1 );

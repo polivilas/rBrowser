@@ -9,36 +9,53 @@
 
 local PANEL = {};
 
-PANEL.TickPos = 1; -- What tick we're on
-PANEL.VisibleTicks = 1; -- How many ticks are visible
-PANEL.TotalTicks = 10; -- Total Ticks
-
-PANEL.OnScrolled = nil; -- function hook. Syntax is Scrollbar.OnScrolled = function ( scrollbar, minTick ) end
-
-PANEL.Dragging = false;
-
-PANEL.Drag = {};
-PANEL.Drag.LocalY = 0;
-PANEL.Drag.LocalYDest = 0;
-PANEL.Drag.WorldY = 0;
-PANEL.Drag.WorldYDest = 0;
-PANEL.Drag.TickPos = 0;
-PANEL.Drag.TickDest = 0;
-
-PANEL.Enabled = true;
-
 function PANEL:Init()
+
+	self.Enabled = true;
+
+	self.TickPos = 1; -- What tick we're on
+	self.VisibleTicks = 1; -- How many ticks are visible
+	self.TotalTicks = 10; -- Total Ticks
+
+	self.OnScrolled = nil; -- function hook. Syntax is Scrollbar.OnScrolled = function ( scrollbar, minTick ) end
+
+	self.Dragging = false;
+
+	self.Drag = {};
+	self.Drag.LocalY = 0;
+	self.Drag.LocalYDest = 0;
+	self.Drag.WorldY = 0;
+	self.Drag.WorldYDest = 0;
+	self.Drag.TickPos = 0;
+	self.Drag.TickDest = 0;
+
 	self.btnUp = vgui.Create( "DButton", self );
 	--self.btnUp:SetType( "up" );
+	self.btnUp:SetText( "" )
 	self.btnUp.DoClick = function ( self ) self:GetParent():Move( -1 ); end
 	self.btnUp:SetSize( 16,16 );
 	self.btnUp:SetPos( 0,0 );
+	self.btnUp.Paint = function( self, w, h )
+		if self.Hovered then
+			draw.RoundedBox(0, 0, 0, w, h, Color( 185, 185, 185, 255 ))
+		else
+			draw.RoundedBox(0, 0, 0, w, h, Color( 255, 255, 255, 255 ))
+		end
+	end
 	
 	self.btnDown = vgui.Create( "DButton", self );
 	--self.btnDown:SetType( "down" );
+	self.btnDown:SetText( "" )
 	self.btnDown.DoClick = function ( self ) self:GetParent():Move( 1 ); end
 	self.btnDown:SetSize( 16,16 );
 	self.btnDown:SetPos( 0, self:GetTall() - 16 );
+	self.btnDown.Paint = function( self, w, h )
+		if self.Hovered then
+			draw.RoundedBox(0, 0, 0, w, h, Color( 185, 185, 185, 255 ))
+		else
+			draw.RoundedBox(0, 0, 0, w, h, Color( 255, 255, 255, 255 ))
+		end
+	end
 	
 	self.btnGrip = vgui.Create( "fileScrollerGrip", self );
 	self.btnGrip:SetSize( self:GetWide(), 16 );
@@ -162,10 +179,9 @@ function PANEL:MouseWheelInput( dlta )
 	if ( self.OnScrolled ) then self.OnScrolled( self:GetParent(), newTick ) end
 end
 
-function PANEL:Paint()
-	--derma.SkinHook( "Paint", "VScrollBar", self );
-	--surface.SetDrawColor( 0,0,0,255 );
-	--surface.DrawRect( 2, self.ScrollbarGripPos, self:GetWide() - 4, self.ScrollbarGripSize );
+function PANEL:Paint(w, h)
+	surface.SetDrawColor( 50, 50, 50, 255 );
+	surface.DrawRect( 0, 0, w, h );
 	return true;
 end
 

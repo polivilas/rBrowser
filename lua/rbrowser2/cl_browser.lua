@@ -129,31 +129,43 @@ function fileBrowser.DoubleClick( fileList, id, line )
 end
 
 function fileBrowser.RightClick( fileList, id, line )
-	if ( line.fData ) then
-		local fData = line.fData;
-		--local cMenu = fileBrowser.contextMenus[ fData.ext ];
-		local menu = DermaMenu();
-		menu.Line = line;
-		
-		menu:AddOption( "Open", fileBrowser.ContextOpen );
-		
-		if ( fData.dir == false ) then
-			menu:AddOption( "Open in Text Viewer", function( panel )
-				textReader.Create( panel:GetParent().Line.fData );
-				end
-			);
-			menu:AddOption( "Copy to Data", fileBrowser.CopyToData );
+	if not line.fData then return end
+	local fData = line.fData;
+	local menu = DermaMenu();
+	
+	menu:AddOption( "Open", function()
+		fileBrowser.ContextOpen( fData );
 		end
-		
-		menu:AddOption( "Copy to Clipboard", fileBrowser.CopyToClipboard );
-		menu:AddOption( "Properties", fileBrowser.ContextProperties );
-		menu:Open( nil, nil, nil, line );
+	);
+	
+	if ( fData.dir == false ) then
+		menu:AddOption( "Open in Text Viewer", function()
+			textReader.Create( fData );
+			end
+		);
+		menu:AddOption( "Copy to Data", function()
+			fileBrowser.CopyToData( fData );
+			end
+		);
+	
+		menu:AddOption( "Copy to Clipboard", function()
+			fileBrowser.CopyToClipboard( fData );
+			end
+		);
 	end
+	
+	menu:AddOption( "Properties", function()
+		fileBrowser.ContextProperties( fData );
+		end
+	);
+	menu:Open( nil, nil, nil, line );
 end
 
-function fileBrowser.CopyToClipboard( panel )
+--
+
+function fileBrowser.CopyToClipboard( fData )
 	fileBrowser.ActionSound();
-	local fData = panel:GetParent().Line.fData;
+	if not fData then print("no 'fData' @ fileBrowser.CopyToClipboard") return end
 	local path = string.gsub( fData.path .. fData.name .. "." .. fData.ext, "%.%./", "" );
 	if ( fData.dir == true ) then
 		path = string.gsub( fData.path .. fData.name, "%.%./", "" );
@@ -162,23 +174,27 @@ function fileBrowser.CopyToClipboard( panel )
 	SetClipboardText( path );
 end
 
-function fileBrowser.CopyToData( panel )
+function fileBrowser.CopyToData( fData )
+	if not fData then print("no 'fData' @ fileBrowser.CopyToData") return end
 	fileBrowser.ActionSound();
-	local fData = panel:GetParent().Line.fData;
 	path = fData.path .. fData.name .. "." .. fData.ext;
 	print( "Data: [" .. path .. "]" );
 	file.Write( fData.name .. "." .. fData.ext .. ".txt", file.Read( path ) );
 end
 
-function fileBrowser.ContextOpen( panel )
+function fileBrowser.ContextOpen( fData )
+	if not fData then print("no 'fData' @ fileBrowser.ContextOpen") return end
 	fileBrowser.ActionSound();
-	fileBrowser.OpenFile( panel:GetParent().Line.fData );
+	fileBrowser.OpenFile( fData );
 end
 
-function fileBrowser.ContextProperties( panel )
-	propertiesReader.Create( panel:GetParent().Line.fData );
+function fileBrowser.ContextProperties( fData )
+	if not fData then print("no 'fData' @ fileBrowser.ContextProperties") return end
+	propertiesReader.Create( fData );
 	fileBrowser.ActionSound();
 end
+
+--
 
 function fileBrowser.OpenFolder( folder, filter )
 	if folder == "../" then
@@ -279,11 +295,10 @@ function fileBrowser.Create()
 	local bwser = vgui.Create( "DSizeableFrame" );
 		bwser:SetPos( 10, 10 )
 		bwser:SetSize( 800, 600 );
-		bwser:SetTitle( "Resource Browser v2.0 by Joudoki" );
+		bwser:SetTitle( "Resource Browser" );
 		bwser:SetDraggable( true );
-		bwser:ShowCloseButton( true );
-		bwser:SetMinSize( 800,300 );
-		bwser:SetMaxSize( 800,ScrH() );
+		bwser:SetMinSize( 800, 300 );
+		bwser:SetMaxSize( 800, ScrH() );
 		bwser.CustomLayout = function(pnl)
 			pnl.actionBar:SetSize( pnl:GetWide() - 20, 55 );
 			pnl.viewArea:SetSize( pnl:GetWide() - 20, pnl:GetTall() - 100 );	
@@ -342,6 +357,7 @@ function fileBrowser.Create()
 	local statusBar = vgui.Create( "DTextEntry", bwser );
 		statusBar:SetEditable( false );
 		statusBar:AllowInput ( false );
+		statusBar:SetEditable( false );
 		statusBar:SetText( "Resource Browser Ready!" );
 		statusBar:SetSize( 560, statusBar:GetTall() );
 		actionBar:AddItem( statusBar );
@@ -349,7 +365,7 @@ function fileBrowser.Create()
 	local openSettings = vgui.Create( "DButton", bwser );
 		--openSettings:SetPos( 10, 60 );
 		--openSettings:SetSize( 60, 20 );
-		openSettings:SetText( "Settings" );
+		openSettings:SetText( "" );
 		openSettings.DoClick = function()
 			print( "Open Settings" );
 			if ( fileBrowser.Settings and fileBrowser.Settings.window ) then
@@ -359,10 +375,26 @@ function fileBrowser.Create()
 				print( "Warning: Settings window not initialized!" );
 			end
 		end
+		openSettings.Paint = function(self, w, h)
+			if self.Hovered then
+				draw.RoundedBox(0, 0, 0, w, h, Color( 200, 200, 200, 255 ))
+			else
+				draw.RoundedBox(0, 0, 0, w, h, Color( 150, 150, 150, 255 ))
+			end
+			draw.SimpleText(
+				"Settings",
+				"DermaDefault",
+				self:GetWide() / 2,
+				3,
+				color_white,
+				TEXT_ALIGN_CENTER,
+				TEXT_ALIGN_BOTTOM
+			)
+		end
 		actionBar:AddItem( openSettings );
 
 	local openFind = vgui.Create( "DButton", bwser );
-		openFind:SetText( "Find in Files" );
+		openFind:SetText( "" );
 		openFind.DoClick = function()
 			print( "Open Find" );
 			if ( fileBrowser.Find and fileBrowser.Find.window ) then
@@ -372,10 +404,26 @@ function fileBrowser.Create()
 				print( "Warning: Find window not initialized!" );
 			end
 		end
+		openFind.Paint = function(self, w, h)
+			if self.Hovered then
+				draw.RoundedBox(0, 0, 0, w, h, Color( 200, 200, 200, 255 ))
+			else
+				draw.RoundedBox(0, 0, 0, w, h, Color( 150, 150, 150, 255 ))
+			end
+			draw.SimpleText(
+				"Find in Files",
+				"DermaDefault",
+				self:GetWide() / 2,
+				3,
+				color_white,
+				TEXT_ALIGN_CENTER,
+				TEXT_ALIGN_BOTTOM
+			)
+		end
 		actionBar:AddItem( openFind );
 	
 	local openHelp = vgui.Create( "DButton", bwser );
-		openHelp:SetText( "Open Help" );
+		openHelp:SetText( "" );
 		openHelp.DoClick = function()
 			print( "Open Help" );
 			--if ( fileBrowser.Find and fileBrowser.Find.window ) then
@@ -384,6 +432,22 @@ function fileBrowser.Create()
 			--else
 				--print( "Warning: Find window not initialized!" );
 			--end
+		end
+		openHelp.Paint = function(self, w, h)
+			if self.Hovered then
+				draw.RoundedBox(0, 0, 0, w, h, Color( 200, 200, 200, 255 ))
+			else
+				draw.RoundedBox(0, 0, 0, w, h, Color( 150, 150, 150, 255 ))
+			end
+			draw.SimpleText(
+				"Open Help",
+				"DermaDefault",
+				self:GetWide() / 2,
+				3,
+				color_white,
+				TEXT_ALIGN_CENTER,
+				TEXT_ALIGN_BOTTOM
+			)
 		end
 		actionBar:AddItem( openHelp );
 	
